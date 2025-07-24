@@ -1,44 +1,92 @@
 openapi: 3.0.0
 info:
-  title: Social Network API
+  title: Authentication API
   version: 1.0.0
+
 paths:
-  # Здесь будут описаны эндпоинты API
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '500':
+          description: Server error
+
+  /api/auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Server error
+
+  /api/auth/me:
+    get:
+      summary: Get current user info
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User info retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
 components:
-  schemas:
-    User:
-      type: object
-      properties:
-        _id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        avatar:
-          type: string
-        registrationDate:
-          type: string
-          format: date-time
-        friends:
-          type: array
-          items:
-            type: string
-    Post:
-      type: object
-      properties:
-        _id:
-          type: string
-        author:
-          type: string
-        text:
-          type: string
-        image:
-          type: string
-        creationDate:
-          type: string
-          format: date-time
-        likes:
-          type: array
-          items:
-            type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
