@@ -1,8 +1,52 @@
 openapi: 3.0.0
 info:
-  title: User and Post API
+  title: Social Network API
   version: 1.0.0
 paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/me:
+    get:
+      summary: Get current user info
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
   /api/users/{id}:
     get:
       summary: Get user profile
@@ -21,6 +65,8 @@ paths:
                 $ref: '#/components/schemas/User'
     put:
       summary: Update user profile
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -54,6 +100,8 @@ paths:
                   $ref: '#/components/schemas/Post'
     post:
       summary: Create a new post
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -70,6 +118,8 @@ paths:
   /api/posts/{id}:
     put:
       summary: Update a post
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -91,6 +141,8 @@ paths:
                 $ref: '#/components/schemas/Post'
     delete:
       summary: Delete a post
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: id
@@ -108,7 +160,46 @@ paths:
                   message:
                     type: string
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    UserRegister:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
     User:
       type: object
       properties:
@@ -154,6 +245,8 @@ components:
           type: string
     PostCreate:
       type: object
+      required:
+        - content
       properties:
         content:
           type: string
