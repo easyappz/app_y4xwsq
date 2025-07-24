@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: Social Network API
+  version: 1.0.0
+paths:
+  # Здесь будут описаны эндпоинты API
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+        registrationDate:
+          type: string
+          format: date-time
+        friends:
+          type: array
+          items:
+            type: string
+    Post:
+      type: object
+      properties:
+        _id:
+          type: string
+        author:
+          type: string
+        text:
+          type: string
+        image:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        likes:
+          type: array
+          items:
+            type: string
