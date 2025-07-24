@@ -1,12 +1,67 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Typography, Box, Container, Paper } from '@mui/material';
+import { login } from '../api/auth';
 
-function Login() {
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await login({ email, password });
+      localStorage.setItem('token', response.data.token);
+      navigate('/profile');
+    } catch (err) {
+      setError('Неверный email или пароль. Пожалуйста, попробуйте снова.');
+    }
+  };
+
   return (
-    <Typography variant="h4" component="h1" gutterBottom>
-      Страница входа
-    </Typography>
+    <Container component="main" maxWidth="xs">
+      <Paper elevation={3} sx={{ padding: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography component="h1" variant="h5">
+          Вход
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Пароль"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Войти
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
-}
+};
 
 export default Login;
