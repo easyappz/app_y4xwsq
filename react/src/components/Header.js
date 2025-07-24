@@ -1,25 +1,35 @@
 import React from 'react';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import { useAuth } from '../context/AuthContext';
 
-function Header() {
+const Header = () => {
+  const { user, logout } = useAuth();
+
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
           ВКонтакте
         </Typography>
-        <Button color="inherit" component={Link} to="/">Главная</Button>
-        <Button color="inherit" component={Link} to="/feed">Лента</Button>
-        <Button color="inherit" component={Link} to="/profile">Профиль</Button>
-        <Button color="inherit" component={Link} to="/login">Вход</Button>
-        <Button color="inherit" component={Link} to="/register">Регистрация</Button>
+        <Box>
+          {user ? (
+            <>
+              <Button color="inherit" component={Link} to={`/profile/${user._id}`}>
+                {user.username}
+              </Button>
+              <Button color="inherit" onClick={logout}>Выйти</Button>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/login">Войти</Button>
+              <Button color="inherit" component={Link} to="/register">Регистрация</Button>
+            </>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 export default Header;
